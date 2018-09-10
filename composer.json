@@ -1,7 +1,11 @@
 {
-    "require": {
-        "ulrichsg/getopt-php": "^3.2",
-        "guzzlehttp/guzzle": "^6.3",
-        "wanfeiyy/dd": "^1.0"
+  "require": {
+    "ulrichsg/getopt-php": "^3.2",
+    "guzzlehttp/guzzle": "^6.3",
+  },
+  "autoload": {
+    "psr-4": {
+      "Src\\": "src/"
     }
+  }
 }
