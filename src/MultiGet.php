@@ -32,6 +32,8 @@ class MultiGet
     public function exec(): bool
     {
         $totalSize = $this->options['totalSize'];
+        $numChunks = $this->options['numChunks'];
+        $chunkSize = $this->options['chunkSize'];
 
         $client = new Client();
 
@@ -44,18 +46,20 @@ class MultiGet
 
             // If the file is smaller than the total size requested, just grab all of it
             $totalSize = $contentSize[0] < $this->options['totalSize'] ? $contentSize[0] : $this->options['totalSize'];
-        }
 
-        $numChunks = $this->options['numChunks'];
+            // If the total size requested is smaller than the chunk size, then change chunk size to be total size
+            // divided by number of requested chunks
+            $chunkSize = $totalSize < $chunkSize ? ceil($totalSize / $numChunks) : $chunkSize;
+        }
 
         // If numChunks = 0, then figure out chunk size based on totalSize divided by chunkSize
         if ($numChunks === 0) {
-            $numChunks = ceil($totalSize / $this->options['chunkSize']);
+            $numChunks = ceil($totalSize / $chunkSize);
         }
 
         // Setup the initial start and end positions for the range
         $startPos = 0;
-        $endPos = $this->options['chunkSize'] - 1; //Subtract one since we start with 0
+        $endPos = $chunkSize - 1; //Subtract one since we start with 0
 
         $continue = true;
         $promises = [];
@@ -68,7 +72,7 @@ class MultiGet
 
             // Shift starting position to the end position and add one
             $startPos = $endPos + 1;
-            $endPos += $this->options['chunkSize'];
+            $endPos += $chunkSize;
 
             // If we've reached the number of chunks requested, stop building them
             // Else if starting position for next promise is going to be greater than totalSize, then stop
