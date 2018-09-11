@@ -1,5 +1,9 @@
 # Adam's Multi-Get
 
+## Requirements
+
+* PHP 7.1
+
 ## Setup
 
 ```bash
